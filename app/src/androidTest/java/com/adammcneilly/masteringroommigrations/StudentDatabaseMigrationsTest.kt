@@ -56,6 +56,75 @@ class StudentDatabaseMigrationsTest {
         assertEquals("Adam", nameFromDatabase)
     }
 
+    @Test
+    fun migrate2to3() {
+        database = migrationTestHelper.createDatabase(TEST_DB, 2).apply {
+            // Since we've created a database with version 2, we need to insert stuff manually, because
+            // the  Room DAO interfaces are expecting the latest schema.
+            execSQL(
+                """
+                INSERT INTO Student VALUES (1, 'Adam',  'McNeilly', 10) 
+                """.trimIndent()
+            )
+
+            close()
+        }
+
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_2_3)
+
+        val resultCursor = database.query("SELECT * FROM Student")
+
+        assertTrue(resultCursor.moveToFirst())
+
+        val idColumnIndex = resultCursor.getColumnIndex("id")
+        val ageColumnIndex = resultCursor.getColumnIndex("age")
+        val firstNameColumnIndex = resultCursor.getColumnIndex("firstName")
+        val lastNameColumnIndex = resultCursor.getColumnIndex("lastName")
+
+        // Make sure the lastName was dropped, and all other columns are good
+        assertEquals(-1, lastNameColumnIndex)
+        assertEquals(1, resultCursor.getInt(idColumnIndex))
+        assertEquals("Adam", resultCursor.getString(firstNameColumnIndex))
+        assertEquals(10, resultCursor.getInt(ageColumnIndex))
+    }
+
+    @Test
+    fun migrateAll() {
+        // Start at version 1
+        database = migrationTestHelper.createDatabase(TEST_DB, 1).apply {
+            // Since we've created a database with version 1, we need to insert stuff manually, because
+            // the  Room DAO interfaces are expecting the latest schema.
+            execSQL(
+                """
+                INSERT INTO Student VALUES (1, 'Adam',  'McNeilly') 
+                """.trimIndent()
+            )
+
+            close()
+        }
+
+        // Migrate to current version 3
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_1_2, MIGRATION_2_3)
+
+        // After this, we should have:
+        // 1. a default age from migration 1 -> 2
+        // 2. no last name from migration 2 -> 3
+        val resultCursor = database.query("SELECT * FROM Student")
+
+        assertTrue(resultCursor.moveToFirst())
+
+        val idColumnIndex = resultCursor.getColumnIndex("id")
+        val ageColumnIndex = resultCursor.getColumnIndex("age")
+        val firstNameColumnIndex = resultCursor.getColumnIndex("firstName")
+        val lastNameColumnIndex = resultCursor.getColumnIndex("lastName")
+
+        // Make sure the lastName was dropped, and all other columns are good
+        assertEquals(-1, lastNameColumnIndex)
+        assertEquals(1, resultCursor.getInt(idColumnIndex))
+        assertEquals("Adam", resultCursor.getString(firstNameColumnIndex))
+        assertEquals(0, resultCursor.getInt(ageColumnIndex))
+    }
+
     companion object  {
         private const val TEST_DB = "migration-test"
     }
