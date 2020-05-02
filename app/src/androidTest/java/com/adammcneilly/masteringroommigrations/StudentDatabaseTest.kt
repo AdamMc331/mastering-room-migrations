@@ -36,7 +36,8 @@ class StudentDatabaseTest {
     fun insertReadStudent() {
         val testStudent = Student(
             firstName = "Adam",
-            lastName = "McNeilly"
+            lastName = "McNeilly",
+            age = 10
         )
 
         val newId = database.studentDAO().insertStudent(testStudent)
