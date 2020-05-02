@@ -89,6 +89,35 @@ class StudentDatabaseMigrationsTest {
     }
 
     @Test
+    fun migrate3to4() {
+        database = migrationTestHelper.createDatabase(TEST_DB, 3).apply {
+            // Since we've created a database with version 3, we need to insert stuff manually, because
+            // the  Room DAO interfaces are expecting the latest schema.
+            execSQL(
+                """
+                INSERT INTO Student VALUES (1, 'Adam', 10.0) 
+                """.trimIndent()
+            )
+
+            close()
+        }
+
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 4, true, MIGRATION_3_4)
+
+        val resultCursor = database.query("SELECT * FROM Student")
+
+        assertTrue(resultCursor.moveToFirst())
+
+        val idColumnIndex = resultCursor.getColumnIndex("id")
+        val ageColumnIndex = resultCursor.getColumnIndex("age")
+        val firstNameColumnIndex = resultCursor.getColumnIndex("firstName")
+
+        assertEquals(1, resultCursor.getInt(idColumnIndex))
+        assertEquals("Adam", resultCursor.getString(firstNameColumnIndex))
+        assertEquals(10.0, resultCursor.getDouble(ageColumnIndex), 0.0)
+    }
+
+    @Test
     fun migrateAll() {
         // Start at version 1
         database = migrationTestHelper.createDatabase(TEST_DB, 1).apply {
@@ -103,12 +132,13 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        // Migrate to current version 3
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_1_2, MIGRATION_2_3)
+        // Migrate to current version 4
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 4, true, MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
 
         // After this, we should have:
         // 1. a default age from migration 1 -> 2
         // 2. no last name from migration 2 -> 3
+        // 3. age became a double from migration 3 -> 4
         val resultCursor = database.query("SELECT * FROM Student")
 
         assertTrue(resultCursor.moveToFirst())
@@ -122,7 +152,7 @@ class StudentDatabaseMigrationsTest {
         assertEquals(-1, lastNameColumnIndex)
         assertEquals(1, resultCursor.getInt(idColumnIndex))
         assertEquals("Adam", resultCursor.getString(firstNameColumnIndex))
-        assertEquals(0, resultCursor.getInt(ageColumnIndex))
+        assertEquals(0.0, resultCursor.getDouble(ageColumnIndex), 0.0)
     }
 
     companion object  {
