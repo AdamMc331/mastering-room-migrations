@@ -36,7 +36,6 @@ class StudentDatabaseTest {
     fun insertReadStudent() {
         val testStudent = Student(
             firstName = "Adam",
-            lastName = "McNeilly",
             age = 10
         )
 
