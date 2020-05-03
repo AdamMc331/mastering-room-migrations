@@ -9,7 +9,7 @@ There are a number of changes to your database that could require a migration be
 1. [Adding a field to an existing table.](#Adding-A-Field-To-An-Existing-Table)
 2. [Removing a field from an existing table.](#Removing-A-Field-From-An-Existing-Table)
 3. [Changing the data type or column name of a field from an existing table.](#Changing-The-Data-Type-Of-A-Field)
-4. Adding a new table to the database.
+4. [Adding a new table to the database.](#Adding-A-New-Entity)
 5. Removing a table from the database.
 
 If you have found yourself writing a database migration that's not in the above list, create an Issue and/or Pull Request so we can get it added to the list. :)
@@ -44,19 +44,19 @@ data class Student(
 To add a new column, we can use the `ALTER TABLE` command:
 
 ```kotlin
-database.execSQL("ALTER TABLE table_name ADD COLUMN columnName TYPE [NULL|NOT NULL] [DEFAULT default]"
+database.execSQL("ALTER TABLE table_name ADD COLUMN columnName TYPE [NULL|NOT NULL] [DEFAULT default]")
 ```
 
 A default is required if your new type is not nullable:
 
 ```kotlin
-database.execSQL("ALTER TABLE Student ADD COLUMN age INTEGER NOT NULL DEFAULT 0"
+database.execSQL("ALTER TABLE Student ADD COLUMN age INTEGER NOT NULL DEFAULT 0")
 ```
 
 If your new type is nullable, a default is not required:
 
 ```kotlin
-database.execSQL("ALTER TABLE Student ADD COLUMN nickName TEXT NULL"
+database.execSQL("ALTER TABLE Student ADD COLUMN nickName TEXT NULL")
 ```
 
 You can see a pull request diff of this type of migration [here](https://github.com/AdamMc331/mastering-room-migrations/pull/1).
@@ -95,3 +95,15 @@ database.execSQL("INSERT INTO Student_backup (id, firstName, age) SELECT id, fir
 database.execSQL("DROP TABLE Student")
 database.execSQL("ALTER TABLE Student_backup RENAME TO Student")
 ```
+
+# Adding A New Entity
+
+When adding a new entity to your project, all you need is the relevant create table statement:
+
+```kotlin
+database.execSQL("CREATE TABLE University (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, schoolName TEXT NOT NULL)")
+```
+
+If you have trouble determining what the right syntax is, you can always look at the [json file that room generates](app/schemas/com.adammcneilly.masteringroommigrations.StudentDatabase/5.json).
+
+You can find the pull request demonstrating that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/4). 
