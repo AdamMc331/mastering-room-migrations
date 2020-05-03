@@ -116,4 +116,4 @@ When removing an entity from your project, the only SQL needed is a drop table s
 database.execSQL("DROP TABLE University")
 ``` 
 
-You can find a poll request for that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/5).
+You can find a pull request for that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/5).
