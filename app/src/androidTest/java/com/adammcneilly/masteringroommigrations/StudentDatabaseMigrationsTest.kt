@@ -5,8 +5,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -118,6 +117,24 @@ class StudentDatabaseMigrationsTest {
     }
 
     @Test
+    fun migrate4to5() {
+        database = migrationTestHelper.createDatabase(TEST_DB, 4).apply {
+            // This migration under test creates a new table, we don't need to pre-set anything.
+        }
+
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
+
+        // Make sure we can insert and read from our new table
+        database.execSQL("INSERT INTO  University VALUES (1, 'Oakland')")
+        val resultCursor = database.query("SELECT * FROM University")
+        assertTrue(resultCursor.moveToFirst())
+
+        val nameIndex = resultCursor.getColumnIndex("schoolName")
+        val nameFromDatabase = resultCursor.getString(nameIndex)
+        assertEquals("Oakland", nameFromDatabase)
+    }
+
+    @Test
     fun migrateAll() {
         // Start at version 1
         database = migrationTestHelper.createDatabase(TEST_DB, 1).apply {
@@ -132,8 +149,8 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        // Migrate to current version 4
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 4, true, MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+        // Migrate to current version 5
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
 
         // After this, we should have:
         // 1. a default age from migration 1 -> 2
@@ -153,6 +170,10 @@ class StudentDatabaseMigrationsTest {
         assertEquals(1, resultCursor.getInt(idColumnIndex))
         assertEquals("Adam", resultCursor.getString(firstNameColumnIndex))
         assertEquals(0.0, resultCursor.getDouble(ageColumnIndex), 0.0)
+
+        // We expect this to be empty, we just want to make sure it doesn't fail.
+        val universityCursor = database.query("SELECT * FROM University")
+        assertFalse(universityCursor.moveToFirst())
     }
 
     companion object  {

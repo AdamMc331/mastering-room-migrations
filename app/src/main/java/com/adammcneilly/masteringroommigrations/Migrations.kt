@@ -46,3 +46,12 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
         database.execSQL("ALTER TABLE Student_backup RENAME TO Student")
     }
 }
+
+/**
+ * Database version 5 added the new [University] entity.
+ */
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE University (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, schoolName TEXT NOT NULL)")
+    }
+}
