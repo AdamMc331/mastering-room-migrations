@@ -6,9 +6,9 @@ Database migrations in Room require developers to write SQL statements manually 
 
 There are a number of changes to your database that could require a migration between versions. We can have one or more of these changes in a given migration:
 
-1. Adding a field to an existing table.
-2. Removing a field from an existing table.
-3. Changing the data type or column name of a field from an existing table.
+1. [Adding a field to an existing table.](#Adding-A-Field-To-An-Existing-Table)
+2. [Removing a field from an existing table.](#Removing-A-Field-From-An-Existing-Table)
+3. [Changing the data type or column name of a field from an existing table.](#Changing-The-Data-Type-Of-A-Field)
 4. Adding a new table to the database.
 5. Removing a table from the database.
 
