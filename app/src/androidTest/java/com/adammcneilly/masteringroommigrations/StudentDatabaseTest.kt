@@ -46,18 +46,4 @@ class StudentDatabaseTest {
         assertEquals(1, studentList.size)
         assertEquals(expectedStudent, studentList.first())
     }
-
-    @Test
-    fun insertReadUniversity() {
-        val testUniversity = University(
-            schoolName = "Oakland"
-        )
-
-        val newId = database.studentDAO().insertUniversity(testUniversity)
-
-        val expectedUniversity = testUniversity.copy(id = newId)
-        val universityList = database.studentDAO().fetchUniversities()
-        assertEquals(1, universityList.size)
-        assertEquals(expectedUniversity, universityList.first())
-    }
 }

@@ -48,10 +48,19 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
 }
 
 /**
- * Database version 5 added the new [University] entity.
+ * Database version 5 added the new University entity.
  */
 val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE TABLE University (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, schoolName TEXT NOT NULL)")
+    }
+}
+
+/**
+ * Database version 6 removed the University entity.
+ */
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE University")
     }
 }

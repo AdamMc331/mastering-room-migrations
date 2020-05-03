@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Student::class, University::class], version = 5)
+@Database(entities = [Student::class], version = 6)
 abstract class StudentDatabase : RoomDatabase() {
     abstract fun studentDAO(): StudentDAO
 
@@ -16,7 +16,13 @@ abstract class StudentDatabase : RoomDatabase() {
                 StudentDatabase::class.java,
                 "student-database.db"
             )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(
+                    MIGRATION_1_2,
+                    MIGRATION_2_3,
+                    MIGRATION_3_4,
+                    MIGRATION_4_5,
+                    MIGRATION_5_6
+                )
                 .allowMainThreadQueries()
                 .build()
         }
