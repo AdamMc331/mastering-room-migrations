@@ -9,6 +9,7 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Exception
 
 @RunWith(AndroidJUnit4::class)
 class StudentDatabaseMigrationsTest {
@@ -135,6 +136,24 @@ class StudentDatabaseMigrationsTest {
     }
 
     @Test
+    fun migrate5to6() {
+        database = migrationTestHelper.createDatabase(TEST_DB, 5).apply {
+            // Let's add something to University, just to ensure it's dropped
+            execSQL("INSERT INTO University VALUES (1, 'Okaland')")
+        }
+
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 6, true, MIGRATION_5_6)
+
+        // We should not be able to query the university table
+        try {
+            database.query("SELECT * FROM University")
+            fail("Expected DB query to fail.")
+        } catch (e: Exception) {
+
+        }
+    }
+
+    @Test
     fun migrateAll() {
         // Start at version 1
         database = migrationTestHelper.createDatabase(TEST_DB, 1).apply {
@@ -149,13 +168,23 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        // Migrate to current version 5
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        // Migrate to current version 6
+        database = migrationTestHelper.runMigrationsAndValidate(
+            TEST_DB,
+            6,
+            true,
+            MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4,
+            MIGRATION_4_5,
+            MIGRATION_5_6
+        )
 
         // After this, we should have:
         // 1. a default age from migration 1 -> 2
         // 2. no last name from migration 2 -> 3
         // 3. age became a double from migration 3 -> 4
+        // 4. University table was added in 4 -> 5 but removed in 5 -> 6
         val resultCursor = database.query("SELECT * FROM Student")
 
         assertTrue(resultCursor.moveToFirst())
@@ -171,12 +200,16 @@ class StudentDatabaseMigrationsTest {
         assertEquals("Adam", resultCursor.getString(firstNameColumnIndex))
         assertEquals(0.0, resultCursor.getDouble(ageColumnIndex), 0.0)
 
-        // We expect this to be empty, we just want to make sure it doesn't fail.
-        val universityCursor = database.query("SELECT * FROM University")
-        assertFalse(universityCursor.moveToFirst())
+        // We should not be able to query the university table
+        try {
+            database.query("SELECT * FROM University")
+            fail("Expected DB query to fail.")
+        } catch (e: Exception) {
+
+        }
     }
 
-    companion object  {
+    companion object {
         private const val TEST_DB = "migration-test"
     }
 }

@@ -11,10 +11,4 @@ interface StudentDAO {
 
     @Query("SELECT * FROM Student")
     fun fetchStudents(): List<Student>
-
-    @Insert
-    fun insertUniversity(university: University): Long
-
-    @Query("SELECT * FROM University")
-    fun fetchUniversities(): List<University>
 }

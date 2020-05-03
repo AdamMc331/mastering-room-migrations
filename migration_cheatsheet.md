@@ -106,4 +106,14 @@ database.execSQL("CREATE TABLE University (id INTEGER PRIMARY KEY AUTOINCREMENT 
 
 If you have trouble determining what the right syntax is, you can always look at the [json file that room generates](app/schemas/com.adammcneilly.masteringroommigrations.StudentDatabase/5.json).
 
-You can find the pull request demonstrating that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/4). 
+You can find the pull request demonstrating that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/4).
+
+# Removing An Entity
+
+When removing an entity from your project, the only SQL needed is a drop table statement:
+
+```kotlin
+database.execSQL("DROP TABLE University")
+``` 
+
+You can find a poll request for that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/5).
