@@ -10,7 +10,7 @@ There are a number of changes to your database that could require a migration be
 2. [Removing a field from an existing table.](#Removing-A-Field-From-An-Existing-Table)
 3. [Changing the data type or column name of a field from an existing table.](#Changing-The-Data-Type-Of-A-Field)
 4. [Adding a new table to the database.](#Adding-A-New-Entity)
-5. Removing a table from the database.
+5. [Removing a table from the database.](#Removing-An-Entity)
 
 If you have found yourself writing a database migration that's not in the above list, create an Issue and/or Pull Request so we can get it added to the list. :)
 
