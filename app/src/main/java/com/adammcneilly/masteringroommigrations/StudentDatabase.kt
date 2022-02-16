@@ -5,8 +5,8 @@ import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 
 @Database(
-    entities = [Student::class, University::class],
-    version = 5,
+    entities = [Student::class],
+    version = 6,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(
