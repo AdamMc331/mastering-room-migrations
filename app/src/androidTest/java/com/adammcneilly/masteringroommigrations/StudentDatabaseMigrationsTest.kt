@@ -71,7 +71,7 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_2_3)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true)
 
         val resultCursor = database.query("SELECT * FROM Student")
 
@@ -174,7 +174,6 @@ class StudentDatabaseMigrationsTest {
             TEST_DB,
             6,
             true,
-            MIGRATION_2_3,
             MIGRATION_3_4,
             MIGRATION_4_5,
             MIGRATION_5_6

@@ -4,9 +4,22 @@ import android.content.Context
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 
-@Database(entities = [Student::class], version = 2, autoMigrations = [AutoMigration(from = 1 ,to = 2)])
+@Database(
+    entities = [Student::class],
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(
+        from = 2,
+        to = 3,
+        spec = StudentDatabase.AutoMigrationSpecFrom2To3::class
+    )]
+)
 abstract class StudentDatabase : RoomDatabase() {
     abstract fun studentDAO(): StudentDAO
+
+    @DeleteColumn(tableName = "Student", columnName = "lastName")
+    class AutoMigrationSpecFrom2To3 : AutoMigrationSpec
 
     companion object {
         fun createDatabase(appContext: Context): StudentDatabase {
@@ -16,7 +29,6 @@ abstract class StudentDatabase : RoomDatabase() {
                 "student-database.db"
             )
                 .addMigrations(
-                    MIGRATION_2_3,
                     MIGRATION_3_4,
                     MIGRATION_4_5,
                     MIGRATION_5_6

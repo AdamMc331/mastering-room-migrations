@@ -9,9 +9,6 @@ data class Student(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val firstName: String = "",
-
-    val lastName : String = "",
-
     @ColumnInfo(defaultValue = "0.0")
     val age: Double = 0.0
 )

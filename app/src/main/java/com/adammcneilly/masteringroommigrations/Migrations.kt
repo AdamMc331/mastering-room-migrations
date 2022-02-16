@@ -19,18 +19,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * When migrating from version 2 to version 3, we removed the last name property on the student
  * entity.
  *
- * Note that we can't alter a SQLite table to remove a column: https://www.techonthenet.com/sqlite/tables/alter_table.php
+ * Using AutoMigrations, AutoMigrationSpec needs to be provided with an annotation of
+ * @DeleteColumn, this takes in the table name to be acted upon and the column in question.
  *
- * Which means we must create a backup, move everything, bring it back, and then we're good.
+ * Read more on https://developer.android.com/reference/kotlin/androidx/room/DeleteColumn
  */
-val MIGRATION_2_3 = object : Migration(2, 3) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("CREATE TABLE Student_backup (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, firstName TEXT NOT NULL, age INTEGER NOT NULL)")
-        database.execSQL("INSERT INTO Student_backup (id, firstName, age) SELECT id, firstName, age FROM Student")
-        database.execSQL("DROP TABLE Student")
-        database.execSQL("ALTER TABLE Student_backup RENAME TO Student")
-    }
-}
+
 
 /**
  * When migration from version 3 to version 4, we changed the data type of a student's age from an
