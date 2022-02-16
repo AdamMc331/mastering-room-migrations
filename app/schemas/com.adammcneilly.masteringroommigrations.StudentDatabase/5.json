@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "eeacb5751b89fd70ec3e1b8bd7ddf1c5",
+    "identityHash": "be8eb41442d4434eaea403dae620a265",
     "entities": [
       {
         "tableName": "Student",
@@ -36,12 +36,38 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "University",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `schoolName` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "schoolName",
+            "columnName": "schoolName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'eeacb5751b89fd70ec3e1b8bd7ddf1c5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'be8eb41442d4434eaea403dae620a265')"
     ]
   }
 }

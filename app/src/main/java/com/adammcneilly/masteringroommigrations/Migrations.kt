@@ -36,18 +36,16 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * Database version 5 added the new University entity.
+ *
+ * Manually added University entity as dataclass and registered it in Student database as an entity,
+ * Then added AutoMigration(from=4, to=5) on autoMigrations List
+ *
+ * this completes the job.
  */
-val MIGRATION_4_5 = object : Migration(4, 5) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("CREATE TABLE University (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, schoolName TEXT NOT NULL)")
-    }
-}
+
 
 /**
  * Database version 6 removed the University entity.
+ *
+ * Handled by AutoMigrationSpec with table to be deleted being specified.
  */
-val MIGRATION_5_6 = object : Migration(5, 6) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("DROP TABLE University")
-    }
-}

@@ -124,7 +124,7 @@ class StudentDatabaseMigrationsTest {
             // This migration under test creates a new table, we don't need to pre-set anything.
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true)
 
         // Make sure we can insert and read from our new table
         database.execSQL("INSERT INTO  University VALUES (1, 'Oakland')")
@@ -143,7 +143,7 @@ class StudentDatabaseMigrationsTest {
             execSQL("INSERT INTO University VALUES (1, 'Okaland')")
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 6, true, MIGRATION_5_6)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 6, true)
 
         // We should not be able to query the university table
         try {
@@ -173,9 +173,7 @@ class StudentDatabaseMigrationsTest {
         database = migrationTestHelper.runMigrationsAndValidate(
             TEST_DB,
             6,
-            true,
-            MIGRATION_4_5,
-            MIGRATION_5_6
+            true
         )
 
         // After this, we should have:
