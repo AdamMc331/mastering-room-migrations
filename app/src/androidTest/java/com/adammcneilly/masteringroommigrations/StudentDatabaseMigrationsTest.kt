@@ -20,7 +20,8 @@ class StudentDatabaseMigrationsTest {
     @Rule
     val migrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        StudentDatabase::class.java.canonicalName,
+        StudentDatabase::class.java,
+        ArrayList(),
         FrameworkSQLiteOpenHelperFactory()
     )
 
@@ -38,7 +39,7 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 2, true, MIGRATION_1_2)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 2, true)
 
         val resultCursor = database.query("SELECT * FROM Student")
 
@@ -173,7 +174,6 @@ class StudentDatabaseMigrationsTest {
             TEST_DB,
             6,
             true,
-            MIGRATION_1_2,
             MIGRATION_2_3,
             MIGRATION_3_4,
             MIGRATION_4_5,

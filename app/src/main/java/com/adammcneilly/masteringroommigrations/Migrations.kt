@@ -6,12 +6,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 /**
  * When Migrating from version 1 to version 2, we added the age property on the student
  * entity.
+ *
+ * This is captured by AutoMigrate option that was introduced in room v2.4.0-alpha01
+ *
+ * By adding `autoMigrations = [AutoMigration(from = 1 ,to = 2)]` on the StudentDatabase
+ * abstract class, room will utilise the exported schema from previous version and compare
+ * with the current version definition and implement the changes effectively.
  */
-val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE Student ADD COLUMN age INTEGER NOT NULL DEFAULT 0")
-    }
-}
+
 
 /**
  * When migrating from version 2 to version 3, we removed the last name property on the student

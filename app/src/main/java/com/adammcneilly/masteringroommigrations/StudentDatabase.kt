@@ -1,11 +1,10 @@
 package com.adammcneilly.masteringroommigrations
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 
-@Database(entities = [Student::class], version = 6)
+@Database(entities = [Student::class], version = 2, autoMigrations = [AutoMigration(from = 1 ,to = 2)])
 abstract class StudentDatabase : RoomDatabase() {
     abstract fun studentDAO(): StudentDAO
 
@@ -17,7 +16,6 @@ abstract class StudentDatabase : RoomDatabase() {
                 "student-database.db"
             )
                 .addMigrations(
-                    MIGRATION_1_2,
                     MIGRATION_2_3,
                     MIGRATION_3_4,
                     MIGRATION_4_5,
