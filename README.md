@@ -1,6 +1,9 @@
 # Room Migration Cheat Sheet
 
-Database migrations in Room initially required developers to write SQL statements manually that are executed in the database. Currently, Room provides options to automate your migrations since version [2.4.0-alpha01](#https://developer.android.com/jetpack/androidx/releases/room#2.2.0-alpha01), which allows developers to utilise prebuilt classes and annotations to perform automated migrations on simple changes involving adding, deleting, renaming columns and databases.
+Database migrations in Room initially required developers to write SQL statements manually that are executed in the database.
+
+Currently, Room provides options to automate your migrations since version [2.4.0-alpha01](https://developer.android.com/jetpack/androidx/releases/room#2.2.0-alpha01), which allows developers to utilise prebuilt classes and annotations to perform automated migrations on simple changes involving adding, deleting, renaming columns and databases.
+
 As for complex schema changes, Room may not be able to generate appropriate migrations paths automatically, this includes scenarios such as splitting a table. In such cases, a developer is required to manually define migration path by implementing a `Migration` class. This cheat sheet serves as a reminder of the SQL required for various migrations, automated and manual.
 
 # Types Of Migrations
@@ -47,43 +50,44 @@ data class Student(
 With automated Migrations, you need to add `autoMigrations = [AutoMigration(from = x, to = y)` to your `@Database` annotation, here, Room will
 use your exported schema from previous version to check the changes and determine which new column exists in the later versions and needs to be added.
 
-    ```kotlin
-    // Database class before the version update.
-    @Database(
-      version = 1,
-      entities = [Student::class]
-    )
-    abstract class StudentDatabase : RoomDatabase() {
+```kotlin
+// Database class before the version update.
+@Database(
+  version = 1,
+  entities = [Student::class]
+)
+abstract class StudentDatabase : RoomDatabase() {
 
-    }
+}
 
-    // Database class after the version update.
-    @Database(
-      version = 2,
-      entities = [Student::class],
-      autoMigrations = [
-        AutoMigration (from = 1, to = 2)
-      ]
-    )
-    abstract class StudentDatabase : RoomDatabase() {
+// Database class after the version update.
+@Database(
+  version = 2,
+  entities = [Student::class],
+  autoMigrations = [
+    AutoMigration (from = 1, to = 2)
+  ]
+)
+abstract class StudentDatabase : RoomDatabase() {
 
-    }
-    ```
+}
+```
 
-    In the event that the new field has NOT NULL constraint, you will be required to provide a value for use in the already existing entries in the table.
-    Previously before Room version 2.2.0, default values were provided via SQL, which resulted in default values that Room was not aware of. Currently, Room
-    provides for `@ColumnInfo(defaultValue = "...")` annotation which Room knows of it's existence.
+In the event that the new field has NOT NULL constraint, you will be required to provide a value for use in the already existing entries in the table.
+Previously before Room version 2.2.0, default values were provided via SQL, which resulted in default values that Room was not aware of.
 
-    ```kotlin
-    @Entity(tableName = "student_table")
-    data class Student(
-        val id: Long = 0L,
-        @ColumnInfo(name = "first_name")
-        val firstName: String = ""
-        @ColumnInfo(defaultValue = "0")
-        val age : Int = 0
-    )
-    ```
+As of version [2.2.0-alpha01](https://developer.android.com/jetpack/androidx/releases/room#2.2.0-alpha01), Room provides for `@ColumnInfo(defaultValue = "...")` annotation which Room knows of it's existence.
+
+```kotlin
+@Entity(tableName = "student_table")
+data class Student(
+    val id: Long = 0L,
+    @ColumnInfo(name = "first_name")
+    val firstName: String = ""
+    @ColumnInfo(defaultValue = "0")
+    val age : Int = 0
+)
+```
 
 
 ## The manual way
@@ -112,14 +116,20 @@ You can see a pull request diff of this type of migration [here](https://github.
 
 ## AutoMigration
 This is similar to adding a column, however, as the developer, you need to explicitly tell Room which column needs to be purged.
-This is where the [`AutoMigrationSpec`](#https://developer.android.com/reference/kotlin/androidx/room/migration/AutoMigrationSpec) class comes in, this class gives Room additional information that it needs to correctly generate migration paths.
+This is where the [`AutoMigrationSpec`](https://developer.android.com/reference/kotlin/androidx/room/migration/AutoMigrationSpec) class comes in, this class gives Room additional information that it needs to correctly generate migration paths.
 
-Step 1. Create a class that extends AutoMigrationSpec inside your database class, then anotate it with @DeleteColumn providing more info inside the anotation.
-    `@DeleteColumn(tableName = "table_name", columnName  "columnToDelete")`
-    `class RemoveColumnSpec : AutoMigrationSpec`
+Step 1. Create a class that extends AutoMigrationSpec inside your database class, then annotate it with @DeleteColumn providing more info inside the annotation.
+
+```kotlin
+@DeleteColumn(tableName = "table_name", columnName  "columnToDelete")
+class RemoveColumnSpec : AutoMigrationSpec
+```
 
 Step 2: Add the class to AutoMigration entry.
-    `AutoMigration(from = x, to = y, spec = RemoveColumnSpec::class)`
+
+```kotlin
+AutoMigration(from = x, to = y, spec = RemoveColumnSpec::class)
+```
 
 That's all, your column will be deleted.
 
@@ -193,4 +203,4 @@ database.execSQL("DROP TABLE University")
 
 You can find a pull request for that [here](https://github.com/AdamMc331/mastering-room-migrations/pull/5).
 
-Read more on AutoMigrations [here](#https://developer.android.com/training/data-storage/room/migrating-db-versions#automated).
+Read more on AutoMigrations [here](https://developer.android.com/training/data-storage/room/migrating-db-versions#automated).
