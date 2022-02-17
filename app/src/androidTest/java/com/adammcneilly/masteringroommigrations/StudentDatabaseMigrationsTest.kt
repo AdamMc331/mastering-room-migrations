@@ -20,7 +20,8 @@ class StudentDatabaseMigrationsTest {
     @Rule
     val migrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        StudentDatabase::class.java.canonicalName,
+        StudentDatabase::class.java,
+        ArrayList(),
         FrameworkSQLiteOpenHelperFactory()
     )
 
@@ -38,7 +39,7 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 2, true, MIGRATION_1_2)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 2, true)
 
         val resultCursor = database.query("SELECT * FROM Student")
 
@@ -70,7 +71,7 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_2_3)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 3, true)
 
         val resultCursor = database.query("SELECT * FROM Student")
 
@@ -102,7 +103,7 @@ class StudentDatabaseMigrationsTest {
             close()
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 4, true, MIGRATION_3_4)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 4, true)
 
         val resultCursor = database.query("SELECT * FROM Student")
 
@@ -123,7 +124,7 @@ class StudentDatabaseMigrationsTest {
             // This migration under test creates a new table, we don't need to pre-set anything.
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 5, true)
 
         // Make sure we can insert and read from our new table
         database.execSQL("INSERT INTO  University VALUES (1, 'Oakland')")
@@ -142,7 +143,7 @@ class StudentDatabaseMigrationsTest {
             execSQL("INSERT INTO University VALUES (1, 'Okaland')")
         }
 
-        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 6, true, MIGRATION_5_6)
+        database = migrationTestHelper.runMigrationsAndValidate(TEST_DB, 6, true)
 
         // We should not be able to query the university table
         try {
@@ -172,12 +173,7 @@ class StudentDatabaseMigrationsTest {
         database = migrationTestHelper.runMigrationsAndValidate(
             TEST_DB,
             6,
-            true,
-            MIGRATION_1_2,
-            MIGRATION_2_3,
-            MIGRATION_3_4,
-            MIGRATION_4_5,
-            MIGRATION_5_6
+            true
         )
 
         // After this, we should have:
